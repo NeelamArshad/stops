@@ -4,6 +4,7 @@ author: "Neelam Arshad"
 format: html
 execute: 
   echo: false
+  warning: false
 ---
 
 
@@ -13,10 +14,12 @@ library(tidyverse)
 library(primer.data)
 library(tidymodels)
 library(broom)
+library(marginaleffects)
+x <- stops |>
+  filter(race %in% c("black", "white")) |>
+  mutate(race = str_to_title(race), 
+         sex = str_to_title(sex))
 ```
-
-Racial disparities in law enforcement remain a major concern in modern society, especially when it comes to outcomes like arrests during traffic stops. Using a dataset of traffic stops sourced from the Open Policing project, specifically derived from their New Orleans dataset, we examine whether Black drivers are arrested at higher rates than White drivers, even after accounting for age, gender, and zone.  However, a potential weakness in our model is that the data may not be fully representative of all stops across the city or times, which could bias our estimates. Our data may come from biased officers, who may target certain groups of individuals.
-
 
 
 $$
@@ -27,3 +30,64 @@ with
 $$
 Y \sim \text{Bernoulli}(\rho) where \rho = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n)}}
 $$
+
+
+
+$$
+\widehat{\text{arrested}} = 0.177 
++ 0.0614 \cdot \text{sex}_{\text{Male}} 
+- 0.0445 \cdot \text{race}_{\text{White}} 
++ 0.0146 \cdot \text{zone}_B 
++ 0.0061 \cdot \text{zone}_C 
++ 0.0781 \cdot \text{zone}_D 
++ 0.0019 \cdot \text{zone}_E 
+- 0.0027 \cdot \text{zone}_F 
++ 0.0309 \cdot \text{zone}_G 
++ 0.0757 \cdot \text{zone}_H 
++ \text{(interaction terms between race and zone)}
+$$
+
+
+```{r}
+#| cache: true
+fit_stops <- linear_reg() |>
+    set_engine("lm") |>
+    fit(arrested ~ sex + race*zone, data = x)
+```
+
+```{r}
+#| label: table_fit_stops
+#| cache: true
+
+library(dplyr)
+library(knitr)
+
+tidy(fit_stops, conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high) |>
+  slice(1:10) |>  # Only showing first 10 terms; adjust or remove as needed
+  mutate(across(where(is.numeric), ~round(., 3))) |>
+  kable(
+    caption = "Logistic Regression Estimates for Arrest Probability (Source: Traffic stops dataset)",
+    col.names = c("Variable", "Estimate", "95% CI (Lower)", "95% CI (Upper)")
+  )
+```
+
+```{r}
+library(ggplot2)
+
+pred_data <- plot_predictions(fit_stops, condition = c("sex", "race", "zone"), draw = FALSE)
+
+ggplot(pred_data, aes(x = race, y = estimate, fill = sex)) +
+  geom_col(position = position_dodge()) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
+                position = position_dodge(0.9), width = 0.2) +
+  facet_wrap(~ zone) +
+  labs(title = "Predicted Probabilities of Arrest by Race, Sex, and Zone",
+    subtitle = "Black males consistently have the highest predicted arrest probabilities across zones",
+    caption = "Source: Police stop data, model-estimated probabilities using logistic regression",
+       y = "Predicted Probability of Arrest",
+       x = "Race") +
+  theme_minimal()
+```
+
+Racial disparities in law enforcement remain a major concern in modern society, especially when it comes to outcomes like arrests during traffic stops. Using a dataset of traffic stops sourced from the Open Policing project, specifically derived from their New Orleans dataset, we examine whether Black drivers are arrested at higher rates than White drivers, even after accounting for age, gender, and zone.  However, a potential weakness in our model is that the data may not be fully representative of all stops across the city or times, which could bias our estimates. Our data may come from biased officers, who may target certain groups of individuals. We model the likelihood of a driver being arrested during a traffic stop (a binary outcome: arrested or not arrested) as a logistic function of the driver’s sex, race, and the zone in which the stop occurred. This allows us to estimate how these covariates are associated with the probability of an arrest. The model suggests that, all else equal, being stopped in Zone D is associated with a 7.8 percentage point increase in the probability of arrest compared to the reference zone, with a 95% confidence interval from 7.0% to 8.6%.

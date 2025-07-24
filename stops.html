@@ -99,18 +99,112 @@ window.Quarto = {
 </header>
 
 
-<div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'purrr' was built under R version 4.5.1</code></pre>
-</div>
-</div>
-<p>Racial disparities in law enforcement remain a major concern in modern society, especially when it comes to outcomes like arrests during traffic stops. Using a dataset of traffic stops sourced from the Open Policing project, specifically derived from their New Orleans dataset, we examine whether Black drivers are arrested at higher rates than White drivers, even after accounting for age, gender, and zone. However, a potential weakness in our model is that the data may not be fully representative of all stops across the city or times, which could bias our estimates. Our data may come from biased officers, who may target certain groups of individuals.</p>
 <p><span class="math display">\[
 P(Y = 1) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n)}}
 \]</span></p>
 <p>with <span class="math display">\[
 Y \sim \text{Bernoulli}(\rho) where \rho = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n)}}
 \]</span></p>
+<p><span class="math display">\[
+\widehat{\text{arrested}} = 0.177
++ 0.0614 \cdot \text{sex}_{\text{Male}}
+- 0.0445 \cdot \text{race}_{\text{White}}
++ 0.0146 \cdot \text{zone}_B
++ 0.0061 \cdot \text{zone}_C
++ 0.0781 \cdot \text{zone}_D
++ 0.0019 \cdot \text{zone}_E
+- 0.0027 \cdot \text{zone}_F
++ 0.0309 \cdot \text{zone}_G
++ 0.0757 \cdot \text{zone}_H
++ \text{(interaction terms between race and zone)}
+\]</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Logistic Regression Estimates for Arrest Probability (Source: Traffic stops dataset)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: right;">Estimate</th>
+<th style="text-align: right;">95% CI (Lower)</th>
+<th style="text-align: right;">95% CI (Upper)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">0.177</td>
+<td style="text-align: right;">0.171</td>
+<td style="text-align: right;">0.184</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sexMale</td>
+<td style="text-align: right;">0.061</td>
+<td style="text-align: right;">0.059</td>
+<td style="text-align: right;">0.064</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">raceWhite</td>
+<td style="text-align: right;">-0.045</td>
+<td style="text-align: right;">-0.057</td>
+<td style="text-align: right;">-0.032</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">zoneB</td>
+<td style="text-align: right;">0.015</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">0.025</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">zoneC</td>
+<td style="text-align: right;">0.006</td>
+<td style="text-align: right;">-0.002</td>
+<td style="text-align: right;">0.014</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">zoneD</td>
+<td style="text-align: right;">0.078</td>
+<td style="text-align: right;">0.070</td>
+<td style="text-align: right;">0.086</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">zoneE</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">-0.007</td>
+<td style="text-align: right;">0.011</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">zoneF</td>
+<td style="text-align: right;">-0.003</td>
+<td style="text-align: right;">-0.012</td>
+<td style="text-align: right;">0.007</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">zoneG</td>
+<td style="text-align: right;">0.031</td>
+<td style="text-align: right;">0.021</td>
+<td style="text-align: right;">0.041</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">zoneH</td>
+<td style="text-align: right;">0.076</td>
+<td style="text-align: right;">0.066</td>
+<td style="text-align: right;">0.085</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="stops_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Racial disparities in law enforcement remain a major concern in modern society, especially when it comes to outcomes like arrests during traffic stops. Using a dataset of traffic stops sourced from the Open Policing project, specifically derived from their New Orleans dataset, we examine whether Black drivers are arrested at higher rates than White drivers, even after accounting for age, gender, and zone. However, a potential weakness in our model is that the data may not be fully representative of all stops across the city or times, which could bias our estimates. Our data may come from biased officers, who may target certain groups of individuals. We model the likelihood of a driver being arrested during a traffic stop (a binary outcome: arrested or not arrested) as a logistic function of the driver’s sex, race, and the zone in which the stop occurred. This allows us to estimate how these covariates are associated with the probability of an arrest. The model suggests that, all else equal, being stopped in Zone D is associated with a 7.8 percentage point increase in the probability of arrest compared to the reference zone, with a 95% confidence interval from 7.0% to 8.6%.</p>
 
 </main>
 <!-- /main column -->
