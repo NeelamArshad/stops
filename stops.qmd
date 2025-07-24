@@ -2,5 +2,28 @@
 title: "Stops"
 author: "Neelam Arshad"
 format: html
+execute: 
+  echo: false
 ---
 
+
+```{r}
+#| message: false
+library(tidyverse)
+library(primer.data)
+library(tidymodels)
+library(broom)
+```
+
+Racial disparities in law enforcement remain a major concern in modern society, especially when it comes to outcomes like arrests during traffic stops. Using a dataset of traffic stops sourced from the Open Policing project, specifically derived from their New Orleans dataset, we examine whether Black drivers are arrested at higher rates than White drivers, even after accounting for age, gender, and zone.  However, a potential weakness in our model is that the data may not be fully representative of all stops across the city or times, which could bias our estimates. Our data may come from biased officers, who may target certain groups of individuals.
+
+
+
+$$
+P(Y = 1) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n)}}
+$$
+
+with
+$$
+Y \sim \text{Bernoulli}(\rho) where \rho = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n)}}
+$$
